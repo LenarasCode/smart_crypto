@@ -20,12 +20,15 @@ class CryptoPage extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          if (state.isLoading) {
+          if (state.isLoading && state.cryptoList.isEmpty) {
             return Center(child: CircularProgressIndicator());
           }
 
           return Column(
             children: [
+              if(state.isLoading && state.cryptoList.isNotEmpty)
+                LinearProgressIndicator(),
+              SizedBox(height: 10),
               Wrap(
                 spacing: 8,
                 children: [
@@ -35,9 +38,12 @@ class CryptoPage extends StatelessWidget {
                     },
                     child: Text('Рост'),
                   ),
-                  ElevatedButton(onPressed: () {
+                  ElevatedButton(
+                    onPressed: () {
                       context.read<CryptoBloc>().add(ResetFilters());
-                  }, child: Text('Сброс')),
+                    },
+                    child: Text('Сброс'),
+                  ),
                 ],
               ),
               Expanded(
