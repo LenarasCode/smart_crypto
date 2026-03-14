@@ -6,9 +6,26 @@ import 'package:hive_ce/hive_ce.dart';
 
 class CryptoRepository {
   final Box<CryptoModel> cryptoBox = Hive.box<CryptoModel>('cryptoBox');
+  final Box<String> favoritesBox = Hive.box<String>('favoritesBox');
 
   List<CryptoModel> getLocalData() {
     return cryptoBox.values.toList();
+  }
+
+  Set<String> getFavorites() {
+    return favoritesBox.values.toSet();
+  }
+
+ void toggleFavorite(String id) {
+    if (favoritesBox.containsKey(id)) {
+      favoritesBox.delete(id);
+    } else {
+      favoritesBox.put(id, id);
+    }
+  }
+
+  void clearAllFavorites() {
+    favoritesBox.clear();
   }
 
   Future<List<CryptoModel>> fetchCryptoData() async {

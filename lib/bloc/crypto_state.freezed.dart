@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CryptoState {
 
- List<CryptoModel> get cryptoList; bool get isLoading; String? get error;
+ List<CryptoModel> get cryptoList; bool get isLoading; String? get error; Set<String> get favoriteIds; bool get showOnlyFavorites;
 /// Create a copy of CryptoState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $CryptoStateCopyWith<CryptoState> get copyWith => _$CryptoStateCopyWithImpl<Cryp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CryptoState&&const DeepCollectionEquality().equals(other.cryptoList, cryptoList)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CryptoState&&const DeepCollectionEquality().equals(other.cryptoList, cryptoList)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error)&&const DeepCollectionEquality().equals(other.favoriteIds, favoriteIds)&&(identical(other.showOnlyFavorites, showOnlyFavorites) || other.showOnlyFavorites == showOnlyFavorites));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(cryptoList),isLoading,error);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(cryptoList),isLoading,error,const DeepCollectionEquality().hash(favoriteIds),showOnlyFavorites);
 
 @override
 String toString() {
-  return 'CryptoState(cryptoList: $cryptoList, isLoading: $isLoading, error: $error)';
+  return 'CryptoState(cryptoList: $cryptoList, isLoading: $isLoading, error: $error, favoriteIds: $favoriteIds, showOnlyFavorites: $showOnlyFavorites)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $CryptoStateCopyWith<$Res>  {
   factory $CryptoStateCopyWith(CryptoState value, $Res Function(CryptoState) _then) = _$CryptoStateCopyWithImpl;
 @useResult
 $Res call({
- List<CryptoModel> cryptoList, bool isLoading, String? error
+ List<CryptoModel> cryptoList, bool isLoading, String? error, Set<String> favoriteIds, bool showOnlyFavorites
 });
 
 
@@ -62,12 +62,14 @@ class _$CryptoStateCopyWithImpl<$Res>
 
 /// Create a copy of CryptoState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? cryptoList = null,Object? isLoading = null,Object? error = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? cryptoList = null,Object? isLoading = null,Object? error = freezed,Object? favoriteIds = null,Object? showOnlyFavorites = null,}) {
   return _then(_self.copyWith(
 cryptoList: null == cryptoList ? _self.cryptoList : cryptoList // ignore: cast_nullable_to_non_nullable
 as List<CryptoModel>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,favoriteIds: null == favoriteIds ? _self.favoriteIds : favoriteIds // ignore: cast_nullable_to_non_nullable
+as Set<String>,showOnlyFavorites: null == showOnlyFavorites ? _self.showOnlyFavorites : showOnlyFavorites // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -152,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<CryptoModel> cryptoList,  bool isLoading,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<CryptoModel> cryptoList,  bool isLoading,  String? error,  Set<String> favoriteIds,  bool showOnlyFavorites)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CryptoState() when $default != null:
-return $default(_that.cryptoList,_that.isLoading,_that.error);case _:
+return $default(_that.cryptoList,_that.isLoading,_that.error,_that.favoriteIds,_that.showOnlyFavorites);case _:
   return orElse();
 
 }
@@ -173,10 +175,10 @@ return $default(_that.cryptoList,_that.isLoading,_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<CryptoModel> cryptoList,  bool isLoading,  String? error)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<CryptoModel> cryptoList,  bool isLoading,  String? error,  Set<String> favoriteIds,  bool showOnlyFavorites)  $default,) {final _that = this;
 switch (_that) {
 case _CryptoState():
-return $default(_that.cryptoList,_that.isLoading,_that.error);case _:
+return $default(_that.cryptoList,_that.isLoading,_that.error,_that.favoriteIds,_that.showOnlyFavorites);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +195,10 @@ return $default(_that.cryptoList,_that.isLoading,_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<CryptoModel> cryptoList,  bool isLoading,  String? error)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<CryptoModel> cryptoList,  bool isLoading,  String? error,  Set<String> favoriteIds,  bool showOnlyFavorites)?  $default,) {final _that = this;
 switch (_that) {
 case _CryptoState() when $default != null:
-return $default(_that.cryptoList,_that.isLoading,_that.error);case _:
+return $default(_that.cryptoList,_that.isLoading,_that.error,_that.favoriteIds,_that.showOnlyFavorites);case _:
   return null;
 
 }
@@ -208,7 +210,7 @@ return $default(_that.cryptoList,_that.isLoading,_that.error);case _:
 
 
 class _CryptoState implements CryptoState {
-  const _CryptoState({final  List<CryptoModel> cryptoList = const [], this.isLoading = false, this.error}): _cryptoList = cryptoList;
+  const _CryptoState({final  List<CryptoModel> cryptoList = const [], this.isLoading = false, this.error, final  Set<String> favoriteIds = const {}, this.showOnlyFavorites = false}): _cryptoList = cryptoList,_favoriteIds = favoriteIds;
   
 
  final  List<CryptoModel> _cryptoList;
@@ -220,6 +222,14 @@ class _CryptoState implements CryptoState {
 
 @override@JsonKey() final  bool isLoading;
 @override final  String? error;
+ final  Set<String> _favoriteIds;
+@override@JsonKey() Set<String> get favoriteIds {
+  if (_favoriteIds is EqualUnmodifiableSetView) return _favoriteIds;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableSetView(_favoriteIds);
+}
+
+@override@JsonKey() final  bool showOnlyFavorites;
 
 /// Create a copy of CryptoState
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +241,16 @@ _$CryptoStateCopyWith<_CryptoState> get copyWith => __$CryptoStateCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CryptoState&&const DeepCollectionEquality().equals(other._cryptoList, _cryptoList)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CryptoState&&const DeepCollectionEquality().equals(other._cryptoList, _cryptoList)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.error, error) || other.error == error)&&const DeepCollectionEquality().equals(other._favoriteIds, _favoriteIds)&&(identical(other.showOnlyFavorites, showOnlyFavorites) || other.showOnlyFavorites == showOnlyFavorites));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_cryptoList),isLoading,error);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_cryptoList),isLoading,error,const DeepCollectionEquality().hash(_favoriteIds),showOnlyFavorites);
 
 @override
 String toString() {
-  return 'CryptoState(cryptoList: $cryptoList, isLoading: $isLoading, error: $error)';
+  return 'CryptoState(cryptoList: $cryptoList, isLoading: $isLoading, error: $error, favoriteIds: $favoriteIds, showOnlyFavorites: $showOnlyFavorites)';
 }
 
 
@@ -251,7 +261,7 @@ abstract mixin class _$CryptoStateCopyWith<$Res> implements $CryptoStateCopyWith
   factory _$CryptoStateCopyWith(_CryptoState value, $Res Function(_CryptoState) _then) = __$CryptoStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<CryptoModel> cryptoList, bool isLoading, String? error
+ List<CryptoModel> cryptoList, bool isLoading, String? error, Set<String> favoriteIds, bool showOnlyFavorites
 });
 
 
@@ -268,12 +278,14 @@ class __$CryptoStateCopyWithImpl<$Res>
 
 /// Create a copy of CryptoState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? cryptoList = null,Object? isLoading = null,Object? error = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? cryptoList = null,Object? isLoading = null,Object? error = freezed,Object? favoriteIds = null,Object? showOnlyFavorites = null,}) {
   return _then(_CryptoState(
 cryptoList: null == cryptoList ? _self._cryptoList : cryptoList // ignore: cast_nullable_to_non_nullable
 as List<CryptoModel>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,favoriteIds: null == favoriteIds ? _self._favoriteIds : favoriteIds // ignore: cast_nullable_to_non_nullable
+as Set<String>,showOnlyFavorites: null == showOnlyFavorites ? _self.showOnlyFavorites : showOnlyFavorites // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

@@ -12,10 +12,15 @@ class CryptoBloc extends Bloc<CryptoEvent, CryptoState> {
   CryptoBloc(this.cryptoRepository) : super(const CryptoState()) {
     on<FetchCryptoData>((event, emit) async {
       final localData = cryptoRepository.getLocalData();
-
+      final favorites = cryptoRepository.getFavorites();
       if (localData.isNotEmpty) {
         emit(
-          state.copyWith(cryptoList: localData, isLoading: true, error: null),
+          state.copyWith(
+            cryptoList: localData,
+            favoriteIds: favorites,
+            isLoading: true,
+            error: null,
+          ),
         );
       } else {
         emit(state.copyWith(isLoading: true, error: null));
@@ -45,6 +50,26 @@ class CryptoBloc extends Bloc<CryptoEvent, CryptoState> {
 
     on<ResetFilters>((event, emit) {
       emit(state.copyWith(cryptoList: _originalList));
+    });
+
+ on<ToggleFavorite>((event, emit) {
+      final currentFavorites = Set<String>.from(state.favoriteIds);
+      if (currentFavorites.contains(event.id)) {
+        currentFavorites.remove(event.id);
+      } else {
+        currentFavorites.add(event.id);
+      }
+      cryptoRepository.toggleFavorite(event.id);
+      emit(state.copyWith(favoriteIds: currentFavorites));
+    });
+
+    on<FilterFavorites>((event, emit) {
+      emit(state.copyWith(showOnlyFavorites: !state.showOnlyFavorites));
+    });
+
+    on<ClearAllFavorites>((event, emit) {
+      cryptoRepository.clearAllFavorites();
+      emit(state.copyWith(favoriteIds: Set<String>.from({})));
     });
   }
 }

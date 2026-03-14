@@ -16,6 +16,7 @@ Future<void> main() async {
   Hive.registerAdapter(CryptoModelAdapter());
 
   await Hive.openBox<CryptoModel>('cryptoBox');
+  await Hive.openBox<String>('favoritesBox');
 
   runApp(const MyApp());
 }
