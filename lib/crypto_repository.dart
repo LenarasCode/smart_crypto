@@ -1,52 +1,45 @@
 import 'dart:convert';
-
-import 'package:smart_crypto/crypto_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:hive_ce/hive_ce.dart';
+import 'package:smart_crypto/crypto_model.dart';
 
 class CryptoRepository {
-  final Box<CryptoModel> cryptoBox = Hive.box<CryptoModel>('cryptoBox');
-  final Box<String> favoritesBox = Hive.box<String>('favoritesBox');
+  List<CryptoModel> _localData = [];
+  Set<String> _favorites = {};
 
-  List<CryptoModel> getLocalData() {
-    return cryptoBox.values.toList();
+  List<CryptoModel> getLocalData() => _localData;
+  Set<String> getFavorites() => _favorites;
+
+  Future<List<CryptoModel>> fetchCryptoData() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false',
+        ),
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'Mozilla/5.0',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => CryptoModel.fromJsonGecko(json)).toList();
+      } else {
+        throw Exception('Ошибка сервера: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Не удалось загрузить данные');
+    }
   }
 
-  Set<String> getFavorites() {
-    return favoritesBox.values.toSet();
-  }
-
- void toggleFavorite(String id) {
-    if (favoritesBox.containsKey(id)) {
-      favoritesBox.delete(id);
+  void toggleFavorite(String id) {
+    if (_favorites.contains(id)) {
+      _favorites.remove(id);
     } else {
-      favoritesBox.put(id, id);
+      _favorites.add(id);
     }
   }
 
   void clearAllFavorites() {
-    favoritesBox.clear();
-  }
-
-  Future<List<CryptoModel>> fetchCryptoData() async {
-    final response = await http.get(
-      Uri.parse('https://api.coinlore.net/api/tickers/'),
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final List list = data['data'];
-
-      List<CryptoModel> values = list
-          .map((item) => CryptoModel.fromJson(item))
-          .toList();
-
-      await cryptoBox.clear();
-      await cryptoBox.addAll(values);
-
-      return values;
-    } else {
-      throw Exception('Ошибка API');
-    }
+    _favorites.clear();
   }
 }

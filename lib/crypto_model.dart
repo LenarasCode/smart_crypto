@@ -1,22 +1,25 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive_ce/hive_ce.dart';
+class CryptoModel {
+  final String id;
+  final String name;
+  final String symbol;
+  final String priceUsd;
+  final String changePercent24Hr;
 
-part 'crypto_model.freezed.dart';
-part 'crypto_model.g.dart';
+  CryptoModel({
+    required this.id,
+    required this.name,
+    required this.symbol,
+    required this.priceUsd,
+    required this.changePercent24Hr,
+  });
 
-@freezed
-@HiveType(typeId: 0)
-abstract class CryptoModel with _$CryptoModel {
-  const factory CryptoModel({
-    @HiveField(0) required String id,
-    @HiveField(1) required String symbol,
-    @HiveField(2) required String name,
-    @HiveField(3) required int rank,
-    @HiveField(4) @JsonKey(name: 'price_usd') required String priceUsd,
-    @HiveField(5) @JsonKey(name: 'percent_change_24h')
-    required String changePercent24Hr,
-  }) = _CryptoModel;
-
-  factory CryptoModel.fromJson(Map<String, dynamic> json) =>
-      _$CryptoModelFromJson(json);
+  factory CryptoModel.fromJsonGecko(Map<String, dynamic> json) {
+    return CryptoModel(
+      id: json['id'],
+      name: json['name'],
+      symbol: json['symbol'].toUpperCase(),
+      priceUsd: json['current_price']?.toString() ?? '0',
+      changePercent24Hr: json['price_change_percentage_24h']?.toString() ?? '0',
+    );
+  }
 }

@@ -1,38 +1,33 @@
 name: smart_crypto
 description: "A new Flutter project."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
+publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.7
-
+  sdk: ^3.9.2
 
 dependencies:
   flutter:
     sdk: flutter
-
   cupertino_icons: ^1.0.8
   flutter_bloc: ^9.1.1
   freezed_annotation: ^3.1.0
   http: ^1.6.0
   hive_ce: ^2.19.3
   hive_ce_flutter: ^2.3.4
+  json_annotation: ^4.8.1          # добавлено для json_serializable
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^6.0.0
   build_runner: ^2.4.6
   freezed: ^3.2.5
   json_serializable: ^6.7.2
   hive_ce_generator: ^1.11.1
 
-
 flutter:
-
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:

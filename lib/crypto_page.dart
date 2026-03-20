@@ -11,107 +11,70 @@ class CryptoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crypto App'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.read<CryptoBloc>().add(ClearAllFavorites());
-            },
-            icon: Icon(Icons.delete_sweep),
+        title: const Text('Криптовалюты'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<CryptoBloc>().add(FilterFalling());
+                  },
+                  child: const Text('Падение'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<CryptoBloc>().add(FilterTop10());
+                  },
+                  child: const Text('Топ-10'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<CryptoBloc>().add(ResetFilters());
+                  },
+                  child: const Text('Все'),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
-      body: BlocConsumer<CryptoBloc, CryptoState>(
-        listener: (context, state) {
-          if (state.error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Ошибка при получении данных')),
-            );
-          }
-        },
+      body: BlocBuilder<CryptoBloc, CryptoState>(
         builder: (context, state) {
-          var displayList = state.cryptoList;
-          if (state.showOnlyFavorites) {
-            displayList = displayList.where((c) {
-              return state.favoriteIds.contains(c.id);
-            }).toList();
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
-
-          if (state.isLoading && state.cryptoList.isEmpty) {
-            return Center(child: CircularProgressIndicator());
+          if (state.error != null) {
+            return Center(child: Text('Ошибка: ${state.error}'));
           }
-
-          return Column(
-            children: [
-              if (state.isLoading && state.cryptoList.isNotEmpty)
-                LinearProgressIndicator(),
-              SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<CryptoBloc>().add(FilterGainers());
-                    },
-                    child: Text('Рост'),
+          final displayList = state.filteredList;
+          if (displayList.isEmpty) {
+            return const Center(child: Text('Нет данных'));
+          }
+          return ListView.builder(
+            itemCount: displayList.length,
+            itemBuilder: (context, index) {
+              final crypto = displayList[index];
+              final price = double.tryParse(crypto.priceUsd) ?? 0.0;
+              return ListTile(
+                title: Text(crypto.name),
+                subtitle: Text('\$${price.toStringAsFixed(2)}'),
+                trailing: IconButton(
+                  icon: Icon(
+                    state.favoriteIds.contains(crypto.id)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: Colors.red,
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<CryptoBloc>().add(ResetFilters());
-                    },
-                    child: Text('Сброс'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<CryptoBloc>().add(FilterFavorites());
-                    },
-                    child: Text('Избранные'),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  itemCount: displayList.length,
-                  itemBuilder: (context, index) {
-                    final crypto = displayList[index];
-                    final isFavorite = state.favoriteIds.contains(crypto.id);
-
-                    return Card(
-                      child: ListTile(
-                        title: Text(crypto.name),
-                        subtitle: Text('${crypto.priceUsd}\$'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '${crypto.changePercent24Hr} %',
-                              style: TextStyle(
-                                color:
-                                    double.parse(crypto.changePercent24Hr) >= 0
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                context.read<CryptoBloc>().add(
-                                  ToggleFavorite(crypto.id),
-                                );
-                              },
-                              icon: Icon(
-                                isFavorite ? Icons.star : Icons.star_border,
-                                color: isFavorite ? Colors.amber : null,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                  onPressed: () {
+                    context.read<CryptoBloc>().add(ToggleFavorite(crypto.id));
                   },
                 ),
-              ),
-            ],
+              );
+            },
           );
         },
       ),
