@@ -7,7 +7,7 @@ class CryptoState {
   final String? error;
   final Set<String> favoriteIds;
   final bool showOnlyFavorites;
-  final String filterType; // 'all', 'falling', 'top10'
+  final String filterType;
 
   const CryptoState({
     this.cryptoList = const [],

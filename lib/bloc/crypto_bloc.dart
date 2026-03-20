@@ -9,6 +9,7 @@ class CryptoBloc extends Bloc<CryptoEvent, CryptoState> {
 
   CryptoBloc(this.cryptoRepository) : super(const CryptoState()) {
     on<FetchCryptoData>(_onFetchCryptoData);
+    on<FilterGainers>(_onFilterGainers);
     on<FilterFalling>(_onFilterFalling);
     on<FilterTop10>(_onFilterTop10);
     on<ResetFilters>(_onResetFilters);
@@ -21,22 +22,48 @@ class CryptoBloc extends Bloc<CryptoEvent, CryptoState> {
     FetchCryptoData event,
     Emitter<CryptoState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true, error: null));
+    final localData = cryptoRepository.getLocalData();
+    final favorites = cryptoRepository.getFavorites();
+    if (localData.isNotEmpty) {
+      emit(state.copyWith(
+        cryptoList: localData,
+        filteredList: localData,
+        favoriteIds: favorites,
+        isLoading: true,
+        error: null,
+      ));
+    } else {
+      emit(state.copyWith(isLoading: true, error: null));
+    }
+
+    await Future.delayed(const Duration(seconds: 2));
     try {
       final data = await cryptoRepository.fetchCryptoData();
       emit(state.copyWith(
         isLoading: false,
         cryptoList: data,
         filteredList: data,
-        favoriteIds: cryptoRepository.getFavorites(),
+        favoriteIds: favorites,
         filterType: 'all',
       ));
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: 'Ошибка при получении данных',
       ));
     }
+  }
+
+  void _onFilterGainers(FilterGainers event, Emitter<CryptoState> emit) {
+    final all = state.cryptoList;
+    final filtered = all.where((c) {
+      final change = double.tryParse(c.changePercent24Hr) ?? 0;
+      return change > 0;
+    }).toList();
+    emit(state.copyWith(
+      filteredList: filtered,
+      filterType: 'gainers',
+    ));
   }
 
   void _onFilterFalling(FilterFalling event, Emitter<CryptoState> emit) {
@@ -63,8 +90,9 @@ class CryptoBloc extends Bloc<CryptoEvent, CryptoState> {
   }
 
   void _onResetFilters(ResetFilters event, Emitter<CryptoState> emit) {
+    final all = state.cryptoList;
     emit(state.copyWith(
-      filteredList: state.cryptoList,
+      filteredList: all,
       filterType: 'all',
     ));
   }
@@ -123,6 +151,11 @@ class CryptoBloc extends Bloc<CryptoEvent, CryptoState> {
         final sorted = List<CryptoModel>.from(list)
           ..sort((a, b) => double.parse(b.priceUsd).compareTo(double.parse(a.priceUsd)));
         return sorted.take(10).toList();
+      case 'gainers':
+        return list.where((c) {
+          final change = double.tryParse(c.changePercent24Hr) ?? 0;
+          return change > 0;
+        }).toList();
       default:
         return list;
     }

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:smart_crypto/bloc/crypto_bloc.dart';
 import 'package:smart_crypto/bloc/crypto_event.dart';
 import 'package:smart_crypto/crypto_page.dart';
 import 'package:smart_crypto/crypto_repository.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox<String>('favoritesBox');
   runApp(const MyApp());
 }
 

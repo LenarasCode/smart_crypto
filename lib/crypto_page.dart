@@ -12,6 +12,15 @@ class CryptoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Криптовалюты'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_sweep),
+            onPressed: () {
+              context.read<CryptoBloc>().add(ClearAllFavorites());
+            },
+            tooltip: 'Очистить все избранные',
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(50),
           child: Padding(
